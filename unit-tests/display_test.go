@@ -1,11 +1,7 @@
 package unit_tests
 
 import (
-	"fmt"
 	"testing"
-
-	. "github.com/atrico-go/testing/assert"
-	"github.com/atrico-go/testing/is"
 
 	"github.com/atrico-go/tree"
 )
@@ -313,36 +309,15 @@ func TestDisplayEmptyNodesAllEmpty(t *testing.T) {
 }
 
 func testTypes(t *testing.T, root tree.Node, expectedTopDown []string, expectedBalanced []string, expectedBalancedFavourTop []string, expectedBottomUp []string) {
-	t.Run("Top down", func(t *testing.T) { testImpl(t, root, tree.TopDown, expectedTopDown) })
-	t.Run("Balanced", func(t *testing.T) { testImpl(t, root, tree.Balanced, expectedBalanced) })
-	t.Run("Balanced favour top", func(t *testing.T) { testImpl(t, root, tree.BalancedFavourTop, expectedBalancedFavourTop) })
-	t.Run("Bottom up", func(t *testing.T) { testImpl(t, root, tree.BottomUp, expectedBottomUp) })
-}
-
-func testImpl(t *testing.T, root tree.Node, displayType tree.DisplayType, expected []string) {
-	// Arrange
-	config := tree.DisplayTreeConfig{Type: displayType}
-
-	// Act
-	result := tree.DisplayTree(root, config)
-	display(result)
-
-	// Assert
-	assertDisplay(t, result, expected)
-}
-
-func display(lines []string) {
-	for _, ln := range lines {
-		fmt.Println(ln)
+	displayFunc := func(config tree.DisplayTreeConfig) []string {
+		return tree.DisplayTree(root, config)
 	}
+	testTypesImpl(t, displayFunc, expectedTopDown, expectedBalanced, expectedBalancedFavourTop, expectedBottomUp)
 }
 
-func assertDisplay(t *testing.T, actual []string, expected []string) {
-	Assert(t).That(len(actual), is.EqualTo(len(expected)), "Correct number of lines")
-	for i := range actual {
-		Assert(t).That(actual[i], is.EqualTo(expected[i]), fmt.Sprintf("Line %d", i))
-	}
-}
+// -------------------------------------------------------------------------------------------------
+// Tree
+// -------------------------------------------------------------------------------------------------
 
 type testTreeNode struct {
 	value    interface{}
@@ -352,6 +327,7 @@ type testTreeNode struct {
 func (n testTreeNode) NodeValue() interface{} {
 	return n.value
 }
+
 func (n testTreeNode) Children() []tree.Node {
 	return n.children
 }
@@ -359,6 +335,7 @@ func (n testTreeNode) Children() []tree.Node {
 func createNode(value string, children ...tree.Node) tree.Node {
 	return testTreeNode{value, children}
 }
+
 func createEmptyNode(children ...tree.Node) tree.Node {
 	return testTreeNode{nil, children}
 }

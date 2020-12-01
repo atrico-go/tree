@@ -21,6 +21,10 @@ func DisplayTree(root Node, config DisplayTreeConfig) []string {
 	return displayTree(root, newRootDetails(), "", config)
 }
 
+func DisplayBinaryTree(root BinaryNode, config DisplayTreeConfig) []string {
+	return DisplayTree(binaryTreeNodeWrapper{root}, config)
+}
+
 func displayTree(node Node, childDetails nodeDetails, prefix string, config DisplayTreeConfig) []string {
 	lines := make([]string, 0, 1)
 	above := aboveChildren(node, config)
@@ -129,6 +133,7 @@ func nodeValue(node Node, config DisplayTreeConfig) string {
 		}
 	}
 }
+
 func nodeChar(details nodeDetails) string {
 	if details.IsRoot {
 		return ""
@@ -152,4 +157,25 @@ func addPrefix(previous string, details nodeDetails) string {
 		ch = " "
 	}
 	return fmt.Sprintf("%s%s  ", previous, ch)
+}
+
+// ---------------------------------------------------------------------
+// Binary tree wrapper
+// ---------------------------------------------------------------------
+type binaryTreeNodeWrapper struct {
+	BinaryNode
+}
+
+func (n binaryTreeNodeWrapper) NodeValue() interface{} {
+	if n.BinaryNode != nil {
+		return n.BinaryNode.NodeValue()
+	}
+	return nil
+}
+
+func (n binaryTreeNodeWrapper) Children() []Node {
+	if n.BinaryNode != nil && (n.BinaryNode.Left() != nil || n.BinaryNode.Right() != nil) {
+		return []Node{binaryTreeNodeWrapper{n.BinaryNode.Left()}, binaryTreeNodeWrapper{n.BinaryNode.Right()}}
+	}
+	return make([]Node, 0)
 }
