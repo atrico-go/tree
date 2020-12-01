@@ -197,6 +197,121 @@ func TestDisplayManyLevelChildren(t *testing.T) {
 	testTypes(t, root, expectedTopDown, expectedBalanced, expectedBalancedFavourTop, expectedBottomUp)
 }
 
+func TestDisplayEmptyNodesSingleNode(t *testing.T) {
+	root := createEmptyNode()
+	expected := []string{
+		"─ ",
+	}
+	testTypes(t, root, expected, expected, expected, expected)
+}
+
+func TestDisplayEmptyNodesManyLevelChildren(t *testing.T) {
+	// Arrange
+	child111 := createNode("Child111")
+	child11 := createNode("Child11", child111)
+	child121 := createNode("Child121")
+	child12 := createEmptyNode(child121)
+	child1 := createNode("Child1", child11, child12)
+	child211 := createNode("Child211")
+	child21 := createNode("Child21", child211)
+	child221 := createNode("Child221")
+	child22 := createNode("Child22", child221)
+	child2 := createNode("Child2", child21, child22)
+	root := createEmptyNode(child1, child2)
+	expectedTopDown := []string{
+		"─ ┐",
+		"  ├─ Child1",
+		"  │  ├─ Child11",
+		"  │  │  └─ Child111",
+		"  │  └─ ┐",
+		"  │     └─ Child121",
+		"  └─ Child2",
+		"     ├─ Child21",
+		"     │  └─ Child211",
+		"     └─ Child22",
+		"        └─ Child221",
+	}
+	expectedBalanced := []string{
+		"     ┌─ Child11",
+		"     │  └─ Child111",
+		"  ┌─ Child1",
+		"  │  └─ ┐",
+		"  │     └─ Child121",
+		"─ ┤",
+		"  │  ┌─ Child21",
+		"  │  │  └─ Child211",
+		"  └─ Child2",
+		"     └─ Child22",
+		"        └─ Child221",
+	}
+	expectedBalancedFavourTop := []string{
+		"        ┌─ Child111",
+		"     ┌─ Child11",
+		"  ┌─ Child1",
+		"  │  │  ┌─ Child121",
+		"  │  └─ ┘",
+		"─ ┤",
+		"  │     ┌─ Child211",
+		"  │  ┌─ Child21",
+		"  └─ Child2",
+		"     │  ┌─ Child221",
+		"     └─ Child22",
+	}
+	expectedBottomUp := []string{
+		"        ┌─ Child111",
+		"     ┌─ Child11",
+		"     │  ┌─ Child121",
+		"     ├─ ┘",
+		"  ┌─ Child1",
+		"  │     ┌─ Child211",
+		"  │  ┌─ Child21",
+		"  │  │  ┌─ Child221",
+		"  │  ├─ Child22",
+		"  ├─ Child2",
+		"─ ┘",
+	}
+	testTypes(t, root, expectedTopDown, expectedBalanced, expectedBalancedFavourTop, expectedBottomUp)
+}
+func TestDisplayEmptyNodesAllEmpty(t *testing.T) {
+	// Arrange
+	child11 := createNode("Child11")
+	child12 := createNode("Child12")
+	child1 := createEmptyNode(child11, child12)
+	child21 := createNode("Child21")
+	child22 := createNode("Child22")
+	child2 := createEmptyNode(child21, child22)
+	root := createEmptyNode(child1, child2)
+	expectedTopDown := []string{
+		"─ ┐",
+		"  ├─ ┐",
+		"  │  ├─ Child11",
+		"  │  └─ Child12",
+		"  └─ ┐",
+		"     ├─ Child21",
+		"     └─ Child22",
+	}
+	expectedBalanced := []string{
+		"     ┌─ Child11",
+		"  ┌─ ┤",
+		"  │  └─ Child12",
+		"─ ┤",
+		"  │  ┌─ Child21",
+		"  └─ ┤",
+		"     └─ Child22",
+	}
+	expectedBalancedFavourTop := expectedBalanced
+	expectedBottomUp := []string{
+		"     ┌─ Child11",
+		"     ├─ Child12",
+		"  ┌─ ┘",
+		"  │  ┌─ Child21",
+		"  │  ├─ Child22",
+		"  ├─ ┘",
+		"─ ┘",
+	}
+	testTypes(t, root, expectedTopDown, expectedBalanced, expectedBalancedFavourTop, expectedBottomUp)
+}
+
 func testTypes(t *testing.T, root tree.Node, expectedTopDown []string, expectedBalanced []string, expectedBalancedFavourTop []string, expectedBottomUp []string) {
 	t.Run("Top down", func(t *testing.T) { testImpl(t, root, tree.TopDown, expectedTopDown) })
 	t.Run("Balanced", func(t *testing.T) { testImpl(t, root, tree.Balanced, expectedBalanced) })
@@ -230,7 +345,7 @@ func assertDisplay(t *testing.T, actual []string, expected []string) {
 }
 
 type testTreeNode struct {
-	value    string
+	value    interface{}
 	children []tree.Node
 }
 
@@ -243,4 +358,7 @@ func (n testTreeNode) Children() []tree.Node {
 
 func createNode(value string, children ...tree.Node) tree.Node {
 	return testTreeNode{value, children}
+}
+func createEmptyNode(children ...tree.Node) tree.Node {
+	return testTreeNode{nil, children}
 }

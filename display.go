@@ -18,20 +18,20 @@ const (
 )
 
 func DisplayTree(root Node, config DisplayTreeConfig) []string {
-	return displayTree(root, childDetails{Root, Above}, "", config)
+	return displayTree(root, newRootDetails(), "", config)
 }
 
-func displayTree(node Node, childDetails childDetails, prefix string, config DisplayTreeConfig) []string {
+func displayTree(node Node, childDetails nodeDetails, prefix string, config DisplayTreeConfig) []string {
 	lines := make([]string, 0, 1)
 	above := aboveChildren(node, config)
 	newPrefix := addPrefix(prefix, childDetails.Above())
 	for i := 0; i < above; i++ {
-		lines = append(lines, displayTree(node.Children()[i], getChildDetails(i, node, Above), newPrefix, config)...)
+		lines = append(lines, displayTree(node.Children()[i], newChildDetails(i, node, Above), newPrefix, config)...)
 	}
-	lines = append(lines, fmt.Sprintf("%s%s─ %v", prefix, nodeChar(childDetails), node.NodeValue()))
+	lines = append(lines, fmt.Sprintf("%s%s─ %v", prefix, nodeChar(childDetails), nodeValue(node, config)))
 	newPrefix = addPrefix(prefix, childDetails.Below())
 	for i := above; i < len(node.Children()); i++ {
-		lines = append(lines, displayTree(node.Children()[i], getChildDetails(i, node, Below), newPrefix, config)...)
+		lines = append(lines, displayTree(node.Children()[i], newChildDetails(i, node, Below), newPrefix, config)...)
 	}
 	return lines
 }
@@ -40,7 +40,6 @@ type childRank int
 type childPosition int
 
 const (
-	Root  childRank     = iota
 	First childRank     = iota
 	Mid   childRank     = iota
 	Last  childRank     = iota
@@ -48,24 +47,21 @@ const (
 	Below childPosition = iota
 )
 
-type childDetails struct {
+type nodeDetails struct {
+	IsRoot   bool
 	Rank     childRank
 	Position childPosition
 }
 
-func (d childDetails) IsRoot() bool {
-	return d.Rank == Root
+func (d nodeDetails) Above() nodeDetails {
+	return nodeDetails{d.IsRoot, d.Rank, Above}
 }
 
-func (d childDetails) Above() childDetails {
-	return childDetails{d.Rank, Above}
+func (d nodeDetails) Below() nodeDetails {
+	return nodeDetails{d.IsRoot, d.Rank, Below}
 }
 
-func (d childDetails) Below() childDetails {
-	return childDetails{d.Rank, Below}
-}
-
-func getChildDetails(idx int, parent Node, pos childPosition) childDetails {
+func newChildDetails(idx int, parent Node, pos childPosition) nodeDetails {
 	rank := Mid
 	if pos == Above {
 		if idx == 0 {
@@ -81,7 +77,11 @@ func getChildDetails(idx int, parent Node, pos childPosition) childDetails {
 			rank = First
 		}
 	}
-	return childDetails{rank, pos}
+	return nodeDetails{false, rank, pos}
+}
+
+func newRootDetails() nodeDetails {
+	return nodeDetails{true, 0, 0}
 }
 
 func aboveChildren(node Node, config DisplayTreeConfig) int {
@@ -99,26 +99,56 @@ func aboveChildren(node Node, config DisplayTreeConfig) int {
 	}
 }
 
-func nodeChar(childDetails childDetails) string {
-	if childDetails.IsRoot() {
+type childrenLocations struct {
+	Above bool
+	Below bool
+}
+
+func childLocations(node Node, config DisplayTreeConfig) childrenLocations {
+	above := aboveChildren(node, config)
+	return childrenLocations{Above: above > 0, Below: above < len(node.Children())}
+}
+
+func nodeValue(node Node, config DisplayTreeConfig) string {
+	value := node.NodeValue()
+	if value != nil {
+		return fmt.Sprintf("%v", value)
+	}
+	children := childLocations(node, config)
+	if children.Above {
+		if children.Below {
+			return "┤"
+		} else {
+			return "┘"
+		}
+	} else {
+		if children.Below {
+			return "┐"
+		} else {
+			return ""
+		}
+	}
+}
+func nodeChar(details nodeDetails) string {
+	if details.IsRoot {
 		return ""
 	}
-	if childDetails.Rank == First && childDetails.Position == Above {
+	if details.Rank == First && details.Position == Above {
 		return "┌"
 	}
-	if childDetails.Rank == Last && childDetails.Position == Below {
+	if details.Rank == Last && details.Position == Below {
 		return "└"
 	}
 	return "├"
 }
 
-func addPrefix(previous string, childDetails childDetails) string {
+func addPrefix(previous string, details nodeDetails) string {
 	ch := "│"
-	if childDetails.IsRoot() {
+	if details.IsRoot {
 		ch = ""
-	} else if childDetails.Rank == First && childDetails.Position == Above {
+	} else if details.Rank == First && details.Position == Above {
 		ch = " "
-	} else if childDetails.Rank == Last && childDetails.Position == Below {
+	} else if details.Rank == Last && details.Position == Below {
 		ch = " "
 	}
 	return fmt.Sprintf("%s%s  ", previous, ch)
