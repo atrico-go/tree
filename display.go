@@ -10,7 +10,7 @@ func DisplayTree(root Node, config DisplayTreeConfig) []string {
 }
 
 func DisplayBinaryTree(root BinaryNode, config DisplayTreeConfig) []string {
-	return DisplayTree(binaryTreeNodeWrapper{root}, config)
+	return DisplayTree(BinaryNodeTreeWrapper{root}, config)
 }
 
 func displayTree(node Node, childDetails nodeDetails, prefix string, config DisplayTreeConfig) []string {
@@ -148,23 +148,4 @@ func addPrefix(previous string, details nodeDetails) string {
 	return fmt.Sprintf("%s%s%s", previous, ch,  getBoxChar(BoxNone, BoxNone, BoxNone, BoxNone))
 }
 
-// ---------------------------------------------------------------------
-// Binary tree wrapper
-// ---------------------------------------------------------------------
-type binaryTreeNodeWrapper struct {
-	BinaryNode
-}
 
-func (n binaryTreeNodeWrapper) NodeValue() interface{} {
-	if n.BinaryNode != nil {
-		return n.BinaryNode.NodeValue()
-	}
-	return nil
-}
-
-func (n binaryTreeNodeWrapper) Children() []Node {
-	if n.BinaryNode != nil && (n.BinaryNode.Left() != nil || n.BinaryNode.Right() != nil) {
-		return []Node{binaryTreeNodeWrapper{n.BinaryNode.Left()}, binaryTreeNodeWrapper{n.BinaryNode.Right()}}
-	}
-	return make([]Node, 0)
-}
