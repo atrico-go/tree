@@ -48,7 +48,7 @@ func (n testBinaryTreeNode) Right() tree.BinaryNode {
 func createBinaryNode(value string, left tree.BinaryNode, right tree.BinaryNode) tree.BinaryNode {
 	return testBinaryTreeNode{value, left, right}
 }
-func createEmptyBinaryNode(left tree.BinaryNode, right tree.BinaryNode) tree.BinaryNode {
+func createBinaryEmptyNode(left tree.BinaryNode, right tree.BinaryNode) tree.BinaryNode {
 	return testBinaryTreeNode{nil, left, right}
 }
 func createBinaryLeafNode(value string) tree.BinaryNode {

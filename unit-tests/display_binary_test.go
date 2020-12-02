@@ -182,7 +182,7 @@ func TestDisplayBinaryManyLevelChildren(t *testing.T) {
 }
 
 func TestDisplayBinaryEmptyNodesSingleNode(t *testing.T) {
-	root := createEmptyBinaryNode(nil, nil)
+	root := createBinaryEmptyNode(nil, nil)
 	expected := []string{
 		"──",
 	}
@@ -194,14 +194,14 @@ func TestDisplayBinaryEmptyNodesManyLevelChildren(t *testing.T) {
 	childLLL := createBinaryLeafNode("ChildLLL")
 	childLL := createBinaryNode("ChildLL", childLLL, nil)
 	childLRR := createBinaryLeafNode("ChildLRR")
-	childLR := createEmptyBinaryNode(nil, childLRR)
+	childLR := createBinaryEmptyNode(nil, childLRR)
 	childL := createBinaryNode("ChildL", childLL, childLR)
 	childRLR := createBinaryLeafNode("ChildRLR")
 	childRL := createBinaryNode("ChildRL", nil, childRLR)
 	childRRL := createBinaryLeafNode("ChildRRL")
 	childRR := createBinaryNode("ChildRR", childRRL, nil)
 	childR := createBinaryNode("ChildR", childRL, childRR)
-	root := createEmptyBinaryNode(childL, childR)
+	root := createBinaryEmptyNode(childL, childR)
 	expectedTopDown := []string{
 		"─┐",
 		" ├─┬ ChildL",
@@ -260,11 +260,11 @@ func TestDisplayBinaryEmptyNodesAllEmpty(t *testing.T) {
 	// Arrange
 	childLL := createBinaryLeafNode("ChildLL")
 	childLR := createBinaryLeafNode("ChildLR")
-	childL := createEmptyBinaryNode(childLL, childLR)
+	childL := createBinaryEmptyNode(childLL, childLR)
 	childRL := createBinaryLeafNode("ChildRL")
 	childRR := createBinaryLeafNode("ChildRR")
-	childR := createEmptyBinaryNode(childRL, childRR)
-	root := createEmptyBinaryNode(childL, childR)
+	childR := createBinaryEmptyNode(childRL, childRR)
+	root := createBinaryEmptyNode(childL, childR)
 	expectedTopDown := []string{
 		"─┐",
 		" ├─┐",
