@@ -2,8 +2,6 @@ package unit_tests
 
 import (
 	"testing"
-
-	"github.com/atrico-go/tree"
 )
 
 func TestDisplayBinarySingleNode(t *testing.T) {
@@ -11,7 +9,7 @@ func TestDisplayBinarySingleNode(t *testing.T) {
 	expected := []string{
 		"─ Root",
 	}
-	testBinaryTypes(t, root, expected, expected, expected)
+	testDisplayTypesBinary(t, root, expected, expected, expected)
 }
 
 func TestDisplayBinarySingleChildLeft(t *testing.T) {
@@ -32,7 +30,7 @@ func TestDisplayBinarySingleChildLeft(t *testing.T) {
 		"  ├─ ",
 		"─ Root",
 	}
-	testBinaryTypes(t, root, expectedTopDown, expectedBalanced, expectedBottomUp)
+	testDisplayTypesBinary(t, root, expectedTopDown, expectedBalanced, expectedBottomUp)
 }
 func TestDisplayBinarySingleChildRight(t *testing.T) {
 	childR := createBinaryLeafNode("ChildR")
@@ -52,7 +50,7 @@ func TestDisplayBinarySingleChildRight(t *testing.T) {
 		"  ├─ ChildR",
 		"─ Root",
 	}
-	testBinaryTypes(t, root, expectedTopDown, expectedBalanced, expectedBottomUp)
+	testDisplayTypesBinary(t, root, expectedTopDown, expectedBalanced, expectedBottomUp)
 }
 
 func TestDisplayBinarySingleLevelChildrenEven(t *testing.T) {
@@ -74,7 +72,7 @@ func TestDisplayBinarySingleLevelChildrenEven(t *testing.T) {
 		"  ├─ ChildR",
 		"─ Root",
 	}
-	testBinaryTypes(t, root, expectedTopDown, expectedBalanced, expectedBottomUp)
+	testDisplayTypesBinary(t, root, expectedTopDown, expectedBalanced, expectedBottomUp)
 }
 
 func TestDisplayBinaryMultipleLevelChildren(t *testing.T) {
@@ -113,7 +111,7 @@ func TestDisplayBinaryMultipleLevelChildren(t *testing.T) {
 		"  ├─ ChildR",
 		"─ Root",
 	}
-	testBinaryTypes(t, root, expectedTopDown, expectedBalanced, expectedBottomUp)
+	testDisplayTypesBinary(t, root, expectedTopDown, expectedBalanced, expectedBottomUp)
 }
 
 func TestDisplayBinaryManyLevelChildren(t *testing.T) {
@@ -180,7 +178,7 @@ func TestDisplayBinaryManyLevelChildren(t *testing.T) {
 		"  ├─ ChildR",
 		"─ Root",
 	}
-	testBinaryTypes(t, root, expectedTopDown, expectedBalanced, expectedBottomUp)
+	testDisplayTypesBinary(t, root, expectedTopDown, expectedBalanced, expectedBottomUp)
 }
 
 func TestDisplayBinaryEmptyNodesSingleNode(t *testing.T) {
@@ -188,7 +186,7 @@ func TestDisplayBinaryEmptyNodesSingleNode(t *testing.T) {
 	expected := []string{
 		"─ ",
 	}
-	testBinaryTypes(t, root, expected, expected, expected)
+	testDisplayTypesBinary(t, root, expected, expected, expected)
 }
 
 func TestDisplayBinaryEmptyNodesManyLevelChildren(t *testing.T) {
@@ -255,7 +253,7 @@ func TestDisplayBinaryEmptyNodesManyLevelChildren(t *testing.T) {
 		"  ├─ ChildR",
 		"─ ┘",
 	}
-	testBinaryTypes(t, root, expectedTopDown, expectedBalanced, expectedBottomUp)
+	testDisplayTypesBinary(t, root, expectedTopDown, expectedBalanced, expectedBottomUp)
 }
 
 func TestDisplayBinaryEmptyNodesAllEmpty(t *testing.T) {
@@ -294,41 +292,5 @@ func TestDisplayBinaryEmptyNodesAllEmpty(t *testing.T) {
 		"  ├─ ┘",
 		"─ ┘",
 	}
-	testBinaryTypes(t, root, expectedTopDown, expectedBalanced, expectedBottomUp)
-}
-
-func testBinaryTypes(t *testing.T, root tree.BinaryNode, expectedTopDown []string, expectedBalanced []string, expectedBottomUp []string) {
-	displayFunc := func(config tree.DisplayTreeConfig) []string {
-		return tree.DisplayBinaryTree(root, config)
-	}
-	// Favour up ignored, treat as balanced
-	testTypesImpl(t, displayFunc, expectedTopDown, expectedBalanced, expectedBalanced, expectedBottomUp)
-}
-
-// -------------------------------------------------------------------------------------------------
-// Binary tree
-// -------------------------------------------------------------------------------------------------
-type testBinaryTreeNode struct {
-	value interface{}
-	left  tree.BinaryNode
-	right tree.BinaryNode
-}
-
-func (n testBinaryTreeNode) NodeValue() interface{} {
-	return n.value
-}
-func (n testBinaryTreeNode) Left() tree.BinaryNode {
-	return n.left
-}
-func (n testBinaryTreeNode) Right() tree.BinaryNode {
-	return n.right
-}
-func createBinaryNode(value string, left tree.BinaryNode, right tree.BinaryNode) tree.BinaryNode {
-	return testBinaryTreeNode{value, left, right}
-}
-func createEmptyBinaryNode(left tree.BinaryNode, right tree.BinaryNode) tree.BinaryNode {
-	return testBinaryTreeNode{nil, left, right}
-}
-func createBinaryLeafNode(value string) tree.BinaryNode {
-	return createBinaryNode(value, nil, nil)
+	testDisplayTypesBinary(t, root, expectedTopDown, expectedBalanced, expectedBottomUp)
 }

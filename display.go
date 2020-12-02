@@ -4,19 +4,6 @@ import (
 	"fmt"
 )
 
-type DisplayTreeConfig struct {
-	Type DisplayType
-}
-
-type DisplayType int
-
-const (
-	TopDown           DisplayType = iota
-	Balanced          DisplayType = iota
-	BalancedFavourTop DisplayType = iota
-	BottomUp          DisplayType = iota
-)
-
 func DisplayTree(root Node, config DisplayTreeConfig) []string {
 	return displayTree(root, newRootDetails(), "", config)
 }
@@ -28,12 +15,12 @@ func DisplayBinaryTree(root BinaryNode, config DisplayTreeConfig) []string {
 func displayTree(node Node, childDetails nodeDetails, prefix string, config DisplayTreeConfig) []string {
 	lines := make([]string, 0, 1)
 	above := aboveChildren(node, config)
-	newPrefix := addPrefix(prefix, childDetails.Above())
+	newPrefix := addPrefix(prefix, childDetails.Above(), config)
 	for i := 0; i < above; i++ {
 		lines = append(lines, displayTree(node.Children()[i], newChildDetails(i, node, Above), newPrefix, config)...)
 	}
-	lines = append(lines, fmt.Sprintf("%s%s─ %v", prefix, nodeChar(childDetails), nodeValue(node, config)))
-	newPrefix = addPrefix(prefix, childDetails.Below())
+	lines = append(lines, fmt.Sprintf("%s%s%s %v", prefix, nodeChar(childDetails, config), config.getChar(BoxNone, BoxNone, BoxSingle, BoxSingle), nodeValue(node, config)))
+	newPrefix = addPrefix(prefix, childDetails.Below(), config)
 	for i := above; i < len(node.Children()); i++ {
 		lines = append(lines, displayTree(node.Children()[i], newChildDetails(i, node, Below), newPrefix, config)...)
 	}
@@ -121,42 +108,42 @@ func nodeValue(node Node, config DisplayTreeConfig) string {
 	children := childLocations(node, config)
 	if children.Above {
 		if children.Below {
-			return "┤"
+			return config.getChar(BoxSingle, BoxSingle, BoxSingle, BoxNone)
 		} else {
-			return "┘"
+			return config.getChar(BoxSingle, BoxNone, BoxSingle, BoxNone)
 		}
 	} else {
 		if children.Below {
-			return "┐"
+			return config.getChar(BoxNone, BoxSingle, BoxSingle, BoxNone)
 		} else {
 			return ""
 		}
 	}
 }
 
-func nodeChar(details nodeDetails) string {
+func nodeChar(details nodeDetails, config DisplayTreeConfig) string {
 	if details.IsRoot {
 		return ""
 	}
 	if details.Rank == First && details.Position == Above {
-		return "┌"
+		return config.getChar(BoxNone, BoxSingle, BoxNone, BoxSingle)
 	}
 	if details.Rank == Last && details.Position == Below {
-		return "└"
+		return config.getChar(BoxSingle, BoxNone, BoxNone, BoxSingle)
 	}
-	return "├"
+	return config.getChar(BoxSingle, BoxSingle, BoxNone, BoxSingle)
 }
 
-func addPrefix(previous string, details nodeDetails) string {
-	ch := "│"
+func addPrefix(previous string, details nodeDetails, config DisplayTreeConfig) string {
+	ch := config.getChar(BoxSingle, BoxSingle, BoxNone, BoxNone)
 	if details.IsRoot {
 		ch = ""
 	} else if details.Rank == First && details.Position == Above {
-		ch = " "
+		ch = config.getChar(BoxNone, BoxNone, BoxNone, BoxNone)
 	} else if details.Rank == Last && details.Position == Below {
-		ch = " "
+		ch = config.getChar(BoxNone, BoxNone, BoxNone, BoxNone)
 	}
-	return fmt.Sprintf("%s%s  ", previous, ch)
+	return fmt.Sprintf("%s%s%s%s", previous, ch, config.getChar(BoxNone, BoxNone, BoxNone, BoxNone),config.getChar(BoxNone, BoxNone, BoxNone, BoxNone))
 }
 
 // ---------------------------------------------------------------------

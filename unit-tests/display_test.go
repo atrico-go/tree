@@ -2,8 +2,6 @@ package unit_tests
 
 import (
 	"testing"
-
-	"github.com/atrico-go/tree"
 )
 
 func TestDisplaySingleNode(t *testing.T) {
@@ -11,7 +9,7 @@ func TestDisplaySingleNode(t *testing.T) {
 	expected := []string{
 		"─ Root",
 	}
-	testTypes(t, root, expected, expected, expected, expected)
+	testDisplayTypes(t, root, expected, expected, expected, expected)
 }
 
 func TestDisplaySingleChild(t *testing.T) {
@@ -27,7 +25,7 @@ func TestDisplaySingleChild(t *testing.T) {
 		"─ Root",
 	}
 	expectedBottomUp := expectedBalancedFavourTop
-	testTypes(t, root, expectedTopDown, expectedBalanced, expectedBalancedFavourTop, expectedBottomUp)
+	testDisplayTypes(t, root, expectedTopDown, expectedBalanced, expectedBalancedFavourTop, expectedBottomUp)
 }
 
 func TestDisplaySingleLevelChildrenEven(t *testing.T) {
@@ -50,7 +48,7 @@ func TestDisplaySingleLevelChildrenEven(t *testing.T) {
 		"  ├─ Child2",
 		"─ Root",
 	}
-	testTypes(t, root, expectedTopDown, expectedBalanced, expectedBalancedFavourTop, expectedBottomUp)
+	testDisplayTypes(t, root, expectedTopDown, expectedBalanced, expectedBalancedFavourTop, expectedBottomUp)
 }
 
 func TestDisplaySingleLevelChildrenOdd(t *testing.T) {
@@ -82,7 +80,7 @@ func TestDisplaySingleLevelChildrenOdd(t *testing.T) {
 		"  ├─ Child3",
 		"─ Root",
 	}
-	testTypes(t, root, expectedTopDown, expectedBalanced, expectedBalancedFavourTop, expectedBottomUp)
+	testDisplayTypes(t, root, expectedTopDown, expectedBalanced, expectedBalancedFavourTop, expectedBottomUp)
 }
 
 func TestDisplayMultipleLevelChildren(t *testing.T) {
@@ -122,7 +120,7 @@ func TestDisplayMultipleLevelChildren(t *testing.T) {
 		"  ├─ Child2",
 		"─ Root",
 	}
-	testTypes(t, root, expectedTopDown, expectedBalanced, expectedBalancedFavourTop, expectedBottomUp)
+	testDisplayTypes(t, root, expectedTopDown, expectedBalanced, expectedBalancedFavourTop, expectedBottomUp)
 }
 
 func TestDisplayManyLevelChildren(t *testing.T) {
@@ -190,7 +188,7 @@ func TestDisplayManyLevelChildren(t *testing.T) {
 		"  ├─ Child2",
 		"─ Root",
 	}
-	testTypes(t, root, expectedTopDown, expectedBalanced, expectedBalancedFavourTop, expectedBottomUp)
+	testDisplayTypes(t, root, expectedTopDown, expectedBalanced, expectedBalancedFavourTop, expectedBottomUp)
 }
 
 func TestDisplayEmptyNodesSingleNode(t *testing.T) {
@@ -198,7 +196,7 @@ func TestDisplayEmptyNodesSingleNode(t *testing.T) {
 	expected := []string{
 		"─ ",
 	}
-	testTypes(t, root, expected, expected, expected, expected)
+	testDisplayTypes(t, root, expected, expected, expected, expected)
 }
 
 func TestDisplayEmptyNodesManyLevelChildren(t *testing.T) {
@@ -266,7 +264,7 @@ func TestDisplayEmptyNodesManyLevelChildren(t *testing.T) {
 		"  ├─ Child2",
 		"─ ┘",
 	}
-	testTypes(t, root, expectedTopDown, expectedBalanced, expectedBalancedFavourTop, expectedBottomUp)
+	testDisplayTypes(t, root, expectedTopDown, expectedBalanced, expectedBalancedFavourTop, expectedBottomUp)
 }
 func TestDisplayEmptyNodesAllEmpty(t *testing.T) {
 	// Arrange
@@ -305,37 +303,5 @@ func TestDisplayEmptyNodesAllEmpty(t *testing.T) {
 		"  ├─ ┘",
 		"─ ┘",
 	}
-	testTypes(t, root, expectedTopDown, expectedBalanced, expectedBalancedFavourTop, expectedBottomUp)
-}
-
-func testTypes(t *testing.T, root tree.Node, expectedTopDown []string, expectedBalanced []string, expectedBalancedFavourTop []string, expectedBottomUp []string) {
-	displayFunc := func(config tree.DisplayTreeConfig) []string {
-		return tree.DisplayTree(root, config)
-	}
-	testTypesImpl(t, displayFunc, expectedTopDown, expectedBalanced, expectedBalancedFavourTop, expectedBottomUp)
-}
-
-// -------------------------------------------------------------------------------------------------
-// Tree
-// -------------------------------------------------------------------------------------------------
-
-type testTreeNode struct {
-	value    interface{}
-	children []tree.Node
-}
-
-func (n testTreeNode) NodeValue() interface{} {
-	return n.value
-}
-
-func (n testTreeNode) Children() []tree.Node {
-	return n.children
-}
-
-func createNode(value string, children ...tree.Node) tree.Node {
-	return testTreeNode{value, children}
-}
-
-func createEmptyNode(children ...tree.Node) tree.Node {
-	return testTreeNode{nil, children}
+	testDisplayTypes(t, root, expectedTopDown, expectedBalanced, expectedBalancedFavourTop, expectedBottomUp)
 }
