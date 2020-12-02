@@ -25,7 +25,6 @@ const (
 	Balanced          DisplayType   = iota
 	BalancedFavourTop DisplayType   = iota
 	BottomUp          DisplayType   = iota
-	ASCII             CharacterType = iota
 	Unicode           CharacterType = iota
 )
 

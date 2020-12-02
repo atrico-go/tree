@@ -2,6 +2,7 @@ package tree
 
 import (
 	"fmt"
+	"strings"
 )
 
 func DisplayTree(root Node, config DisplayTreeConfig) []string {
@@ -15,12 +16,12 @@ func DisplayBinaryTree(root BinaryNode, config DisplayTreeConfig) []string {
 func displayTree(node Node, childDetails nodeDetails, prefix string, config DisplayTreeConfig) []string {
 	lines := make([]string, 0, 1)
 	above := aboveChildren(node, config)
-	newPrefix := addPrefix(prefix, childDetails.Above(), config)
+	newPrefix := addPrefix(prefix, childDetails.Above())
 	for i := 0; i < above; i++ {
 		lines = append(lines, displayTree(node.Children()[i], newChildDetails(i, node, Above), newPrefix, config)...)
 	}
-	lines = append(lines, fmt.Sprintf("%s%s%s %v", prefix, nodeChar(childDetails, config), config.getChar(BoxNone, BoxNone, BoxSingle, BoxSingle), nodeValue(node, config)))
-	newPrefix = addPrefix(prefix, childDetails.Below(), config)
+	lines = append(lines, fmt.Sprintf("%s%s%s%v", prefix, nodeChar(childDetails), getBoxChar(BoxNone, BoxNone, BoxSingle, BoxSingle), nodeValue(node, config)))
+	newPrefix = addPrefix(prefix, childDetails.Below())
 	for i := above; i < len(node.Children()); i++ {
 		lines = append(lines, displayTree(node.Children()[i], newChildDetails(i, node, Below), newPrefix, config)...)
 	}
@@ -99,51 +100,52 @@ func childLocations(node Node, config DisplayTreeConfig) childrenLocations {
 	above := aboveChildren(node, config)
 	return childrenLocations{Above: above > 0, Below: above < len(node.Children())}
 }
-
-func nodeValue(node Node, config DisplayTreeConfig) string {
-	value := node.NodeValue()
-	if value != nil {
-		return fmt.Sprintf("%v", value)
-	}
-	children := childLocations(node, config)
-	if children.Above {
-		if children.Below {
-			return config.getChar(BoxSingle, BoxSingle, BoxSingle, BoxNone)
-		} else {
-			return config.getChar(BoxSingle, BoxNone, BoxSingle, BoxNone)
-		}
+func ifThenElse(c bool, t BoxType, f BoxType) BoxType {
+	if c {
+		return t
 	} else {
-		if children.Below {
-			return config.getChar(BoxNone, BoxSingle, BoxSingle, BoxNone)
-		} else {
-			return ""
-		}
+		return f
 	}
 }
 
-func nodeChar(details nodeDetails, config DisplayTreeConfig) string {
+func nodeValue(node Node, config DisplayTreeConfig) string {
+	text := strings.Builder{}
+	children := childLocations(node, config)
+	up := ifThenElse(children.Above, BoxSingle, BoxNone)
+	down := ifThenElse(children.Below, BoxSingle, BoxNone)
+	left := BoxSingle
+	value := node.NodeValue()
+	right := ifThenElse(value != nil || !(children.Above || children.Below), BoxSingle, BoxNone)
+	text.WriteString(getBoxChar(up, down, left, right))
+	if value != nil {
+		text.WriteString(fmt.Sprintf("%s%v", getBoxChar(BoxNone,BoxNone,BoxNone,BoxNone),value))
+	}
+	return text.String()
+}
+
+func nodeChar(details nodeDetails) string {
 	if details.IsRoot {
 		return ""
 	}
 	if details.Rank == First && details.Position == Above {
-		return config.getChar(BoxNone, BoxSingle, BoxNone, BoxSingle)
+		return getBoxChar(BoxNone, BoxSingle, BoxNone, BoxSingle)
 	}
 	if details.Rank == Last && details.Position == Below {
-		return config.getChar(BoxSingle, BoxNone, BoxNone, BoxSingle)
+		return getBoxChar(BoxSingle, BoxNone, BoxNone, BoxSingle)
 	}
-	return config.getChar(BoxSingle, BoxSingle, BoxNone, BoxSingle)
+	return getBoxChar(BoxSingle, BoxSingle, BoxNone, BoxSingle)
 }
 
-func addPrefix(previous string, details nodeDetails, config DisplayTreeConfig) string {
-	ch := config.getChar(BoxSingle, BoxSingle, BoxNone, BoxNone)
+func addPrefix(previous string, details nodeDetails) string {
+	ch := getBoxChar(BoxSingle, BoxSingle, BoxNone, BoxNone)
 	if details.IsRoot {
 		ch = ""
 	} else if details.Rank == First && details.Position == Above {
-		ch = config.getChar(BoxNone, BoxNone, BoxNone, BoxNone)
+		ch = getBoxChar(BoxNone, BoxNone, BoxNone, BoxNone)
 	} else if details.Rank == Last && details.Position == Below {
-		ch = config.getChar(BoxNone, BoxNone, BoxNone, BoxNone)
+		ch = getBoxChar(BoxNone, BoxNone, BoxNone, BoxNone)
 	}
-	return fmt.Sprintf("%s%s%s%s", previous, ch, config.getChar(BoxNone, BoxNone, BoxNone, BoxNone),config.getChar(BoxNone, BoxNone, BoxNone, BoxNone))
+	return fmt.Sprintf("%s%s%s", previous, ch,  getBoxChar(BoxNone, BoxNone, BoxNone, BoxNone))
 }
 
 // ---------------------------------------------------------------------

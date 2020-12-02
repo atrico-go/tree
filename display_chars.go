@@ -47,36 +47,26 @@ func createDir(up BoxType, down BoxType, left BoxType, right BoxType) direction 
 	return *d.setUp(up).setDown(down).setLeft(left).setRight(right)
 }
 
-type Character struct {
-	Unicode string
-	Ascii   string
-}
-
-var boxParts = map[direction]Character{
-	    createDir(BoxNone, BoxNone, BoxNone, BoxNone): Character{Unicode: " ", Ascii: " "},
-	//	createDir(BoxNone, BoxNone, BoxNone, BoxSingle): Character{Unicode: "", Ascii: ""},
-	//	createDir(BoxNone, BoxNone, BoxSingle, BoxNone): Character{Unicode: "", Ascii: ""},
-		createDir(BoxNone, BoxNone, BoxSingle, BoxSingle): Character{Unicode: "─", Ascii: "-"},
-	//	createDir(BoxNone, BoxSingle, BoxNone, BoxNone): Character{Unicode: "", Ascii: ""},
-		createDir(BoxNone, BoxSingle, BoxNone, BoxSingle): Character{Unicode: "┌", Ascii: "/"},
-		createDir(BoxNone, BoxSingle, BoxSingle, BoxNone): Character{Unicode: "┐", Ascii: "\\"},
-		createDir(BoxNone, BoxSingle, BoxSingle, BoxSingle): Character{Unicode: "┬", Ascii: "+"},
-	//	createDir(BoxSingle, BoxNone, BoxNone, BoxNone): Character{Unicode: "", Ascii: ""},
-		createDir(BoxSingle, BoxNone, BoxNone, BoxSingle): Character{Unicode: "└", Ascii: "\\"},
-		createDir(BoxSingle, BoxNone, BoxSingle, BoxNone): Character{Unicode: "┘", Ascii: "/"},
-		createDir(BoxSingle, BoxNone, BoxSingle, BoxSingle): Character{Unicode: "┴", Ascii: "+"},
-		createDir(BoxSingle, BoxSingle, BoxNone, BoxNone): Character{Unicode: "│", Ascii: "|"},
-		createDir(BoxSingle, BoxSingle, BoxNone, BoxSingle): Character{Unicode: "├", Ascii: "+"},
-		createDir(BoxSingle, BoxSingle, BoxSingle, BoxNone): Character{Unicode: "┤", Ascii: "+"},
-		createDir(BoxSingle, BoxSingle, BoxSingle, BoxSingle): Character{Unicode: "┼", Ascii: "+"},
+var boxParts = map[direction]string{
+	    createDir(BoxNone, BoxNone, BoxNone, BoxNone): " ",
+		createDir(BoxNone, BoxNone, BoxNone, BoxSingle): "╶",
+		createDir(BoxNone, BoxNone, BoxSingle, BoxNone): "╴",
+		createDir(BoxNone, BoxNone, BoxSingle, BoxSingle): "─",
+		createDir(BoxNone, BoxSingle, BoxNone, BoxNone): "╷",
+		createDir(BoxNone, BoxSingle, BoxNone, BoxSingle): "┌",
+		createDir(BoxNone, BoxSingle, BoxSingle, BoxNone): "┐",
+		createDir(BoxNone, BoxSingle, BoxSingle, BoxSingle): "┬",
+		createDir(BoxSingle, BoxNone, BoxNone, BoxNone): "╵",
+		createDir(BoxSingle, BoxNone, BoxNone, BoxSingle): "└",
+		createDir(BoxSingle, BoxNone, BoxSingle, BoxNone): "┘",
+		createDir(BoxSingle, BoxNone, BoxSingle, BoxSingle): "┴",
+		createDir(BoxSingle, BoxSingle, BoxNone, BoxNone): "│",
+		createDir(BoxSingle, BoxSingle, BoxNone, BoxSingle): "├",
+		createDir(BoxSingle, BoxSingle, BoxSingle, BoxNone): "┤",
+		createDir(BoxSingle, BoxSingle, BoxSingle, BoxSingle): "┼",
 }
 
 
-func (config DisplayTreeConfig) getChar(up BoxType,down BoxType,left BoxType,right BoxType) string {
-	chars := boxParts[createDir(up,down,left,right)]
-	if config.Characters == Unicode {
-		return chars.Unicode
-	} else {
-		return chars.Ascii
-	}
+func getBoxChar(up BoxType,down BoxType,left BoxType,right BoxType) string {
+	return boxParts[createDir(up,down,left,right)]
 }

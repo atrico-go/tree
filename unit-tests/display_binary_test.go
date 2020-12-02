@@ -7,7 +7,7 @@ import (
 func TestDisplayBinarySingleNode(t *testing.T) {
 	root := createBinaryLeafNode("Root")
 	expected := []string{
-		"─ Root",
+		"── Root",
 	}
 	testDisplayTypesBinary(t, root, expected, expected, expected)
 }
@@ -16,19 +16,19 @@ func TestDisplayBinarySingleChildLeft(t *testing.T) {
 	childL := createBinaryLeafNode("ChildL")
 	root := createBinaryNode("Root", childL, nil)
 	expectedTopDown := []string{
-		"─ Root",
-		"  ├─ ChildL",
-		"  └─ ",
+		"─┬ Root",
+		" ├── ChildL",
+		" └──",
 	}
 	expectedBalanced := []string{
-		"  ┌─ ChildL",
-		"─ Root",
-		"  └─ ",
+		" ┌── ChildL",
+		"─┼ Root",
+		" └──",
 	}
 	expectedBottomUp := []string{
-		"  ┌─ ChildL",
-		"  ├─ ",
-		"─ Root",
+		" ┌── ChildL",
+		" ├──",
+		"─┴ Root",
 	}
 	testDisplayTypesBinary(t, root, expectedTopDown, expectedBalanced, expectedBottomUp)
 }
@@ -36,19 +36,19 @@ func TestDisplayBinarySingleChildRight(t *testing.T) {
 	childR := createBinaryLeafNode("ChildR")
 	root := createBinaryNode("Root", nil, childR)
 	expectedTopDown := []string{
-		"─ Root",
-		"  ├─ ",
-		"  └─ ChildR",
+		"─┬ Root",
+		" ├──",
+		" └── ChildR",
 	}
 	expectedBalanced := []string{
-		"  ┌─ ",
-		"─ Root",
-		"  └─ ChildR",
+		" ┌──",
+		"─┼ Root",
+		" └── ChildR",
 	}
 	expectedBottomUp := []string{
-		"  ┌─ ",
-		"  ├─ ChildR",
-		"─ Root",
+		" ┌──",
+		" ├── ChildR",
+		"─┴ Root",
 	}
 	testDisplayTypesBinary(t, root, expectedTopDown, expectedBalanced, expectedBottomUp)
 }
@@ -58,19 +58,19 @@ func TestDisplayBinarySingleLevelChildrenEven(t *testing.T) {
 	childR := createBinaryLeafNode("ChildR")
 	root := createBinaryNode("Root", childL, childR)
 	expectedTopDown := []string{
-		"─ Root",
-		"  ├─ ChildL",
-		"  └─ ChildR",
+		"─┬ Root",
+		" ├── ChildL",
+		" └── ChildR",
 	}
 	expectedBalanced := []string{
-		"  ┌─ ChildL",
-		"─ Root",
-		"  └─ ChildR",
+		" ┌── ChildL",
+		"─┼ Root",
+		" └── ChildR",
 	}
 	expectedBottomUp := []string{
-		"  ┌─ ChildL",
-		"  ├─ ChildR",
-		"─ Root",
+		" ┌── ChildL",
+		" ├── ChildR",
+		"─┴ Root",
 	}
 	testDisplayTypesBinary(t, root, expectedTopDown, expectedBalanced, expectedBottomUp)
 }
@@ -85,31 +85,31 @@ func TestDisplayBinaryMultipleLevelChildren(t *testing.T) {
 	childR := createBinaryNode("ChildR", childRL, childRR)
 	root := createBinaryNode("Root", childL, childR)
 	expectedTopDown := []string{
-		"─ Root",
-		"  ├─ ChildL",
-		"  │  ├─ ChildLL",
-		"  │  └─ ChildLR",
-		"  └─ ChildR",
-		"     ├─ ChildRL",
-		"     └─ ChildRR",
+		"─┬ Root",
+		" ├─┬ ChildL",
+		" │ ├── ChildLL",
+		" │ └── ChildLR",
+		" └─┬ ChildR",
+		"   ├── ChildRL",
+		"   └── ChildRR",
 	}
 	expectedBalanced := []string{
-		"     ┌─ ChildLL",
-		"  ┌─ ChildL",
-		"  │  └─ ChildLR",
-		"─ Root",
-		"  │  ┌─ ChildRL",
-		"  └─ ChildR",
-		"     └─ ChildRR",
+		"   ┌── ChildLL",
+		" ┌─┼ ChildL",
+		" │ └── ChildLR",
+		"─┼ Root",
+		" │ ┌── ChildRL",
+		" └─┼ ChildR",
+		"   └── ChildRR",
 	}
 	expectedBottomUp := []string{
-		"     ┌─ ChildLL",
-		"     ├─ ChildLR",
-		"  ┌─ ChildL",
-		"  │  ┌─ ChildRL",
-		"  │  ├─ ChildRR",
-		"  ├─ ChildR",
-		"─ Root",
+		"   ┌── ChildLL",
+		"   ├── ChildLR",
+		" ┌─┴ ChildL",
+		" │ ┌── ChildRL",
+		" │ ├── ChildRR",
+		" ├─┴ ChildR",
+		"─┴ Root",
 	}
 	testDisplayTypesBinary(t, root, expectedTopDown, expectedBalanced, expectedBottomUp)
 }
@@ -128,55 +128,55 @@ func TestDisplayBinaryManyLevelChildren(t *testing.T) {
 	childR := createBinaryNode("ChildR", childRL, childRR)
 	root := createBinaryNode("Root", childL, childR)
 	expectedTopDown := []string{
-		"─ Root",
-		"  ├─ ChildL",
-		"  │  ├─ ChildLL",
-		"  │  │  ├─ ChildLLL",
-		"  │  │  └─ ",
-		"  │  └─ ChildLR",
-		"  │     ├─ ",
-		"  │     └─ ChildLRR",
-		"  └─ ChildR",
-		"     ├─ ChildRL",
-		"     │  ├─ ",
-		"     │  └─ ChildRLR",
-		"     └─ ChildRR",
-		"        ├─ ChildRRL",
-		"        └─ ",
+		"─┬ Root",
+		" ├─┬ ChildL",
+		" │ ├─┬ ChildLL",
+		" │ │ ├── ChildLLL",
+		" │ │ └──",
+		" │ └─┬ ChildLR",
+		" │   ├──",
+		" │   └── ChildLRR",
+		" └─┬ ChildR",
+		"   ├─┬ ChildRL",
+		"   │ ├──",
+		"   │ └── ChildRLR",
+		"   └─┬ ChildRR",
+		"     ├── ChildRRL",
+		"     └──",
 	}
 	expectedBalanced := []string{
-		"        ┌─ ChildLLL",
-		"     ┌─ ChildLL",
-		"     │  └─ ",
-		"  ┌─ ChildL",
-		"  │  │  ┌─ ",
-		"  │  └─ ChildLR",
-		"  │     └─ ChildLRR",
-		"─ Root",
-		"  │     ┌─ ",
-		"  │  ┌─ ChildRL",
-		"  │  │  └─ ChildRLR",
-		"  └─ ChildR",
-		"     │  ┌─ ChildRRL",
-		"     └─ ChildRR",
-		"        └─ ",
+		"     ┌── ChildLLL",
+		"   ┌─┼ ChildLL",
+		"   │ └──",
+		" ┌─┼ ChildL",
+		" │ │ ┌──",
+		" │ └─┼ ChildLR",
+		" │   └── ChildLRR",
+		"─┼ Root",
+		" │   ┌──",
+		" │ ┌─┼ ChildRL",
+		" │ │ └── ChildRLR",
+		" └─┼ ChildR",
+		"   │ ┌── ChildRRL",
+		"   └─┼ ChildRR",
+		"     └──",
 	}
 	expectedBottomUp := []string{
-		"        ┌─ ChildLLL",
-		"        ├─ ",
-		"     ┌─ ChildLL",
-		"     │  ┌─ ",
-		"     │  ├─ ChildLRR",
-		"     ├─ ChildLR",
-		"  ┌─ ChildL",
-		"  │     ┌─ ",
-		"  │     ├─ ChildRLR",
-		"  │  ┌─ ChildRL",
-		"  │  │  ┌─ ChildRRL",
-		"  │  │  ├─ ",
-		"  │  ├─ ChildRR",
-		"  ├─ ChildR",
-		"─ Root",
+		"     ┌── ChildLLL",
+		"     ├──",
+		"   ┌─┴ ChildLL",
+		"   │ ┌──",
+		"   │ ├── ChildLRR",
+		"   ├─┴ ChildLR",
+		" ┌─┴ ChildL",
+		" │   ┌──",
+		" │   ├── ChildRLR",
+		" │ ┌─┴ ChildRL",
+		" │ │ ┌── ChildRRL",
+		" │ │ ├──",
+		" │ ├─┴ ChildRR",
+		" ├─┴ ChildR",
+		"─┴ Root",
 	}
 	testDisplayTypesBinary(t, root, expectedTopDown, expectedBalanced, expectedBottomUp)
 }
@@ -184,7 +184,7 @@ func TestDisplayBinaryManyLevelChildren(t *testing.T) {
 func TestDisplayBinaryEmptyNodesSingleNode(t *testing.T) {
 	root := createEmptyBinaryNode(nil, nil)
 	expected := []string{
-		"─ ",
+		"──",
 	}
 	testDisplayTypesBinary(t, root, expected, expected, expected)
 }
@@ -203,55 +203,55 @@ func TestDisplayBinaryEmptyNodesManyLevelChildren(t *testing.T) {
 	childR := createBinaryNode("ChildR", childRL, childRR)
 	root := createEmptyBinaryNode(childL, childR)
 	expectedTopDown := []string{
-		"─ ┐",
-		"  ├─ ChildL",
-		"  │  ├─ ChildLL",
-		"  │  │  ├─ ChildLLL",
-		"  │  │  └─ ",
-		"  │  └─ ┐",
-		"  │     ├─ ",
-		"  │     └─ ChildLRR",
-		"  └─ ChildR",
-		"     ├─ ChildRL",
-		"     │  ├─ ",
-		"     │  └─ ChildRLR",
-		"     └─ ChildRR",
-		"        ├─ ChildRRL",
-		"        └─ ",
+		"─┐",
+		" ├─┬ ChildL",
+		" │ ├─┬ ChildLL",
+		" │ │ ├── ChildLLL",
+		" │ │ └──",
+		" │ └─┐",
+		" │   ├──",
+		" │   └── ChildLRR",
+		" └─┬ ChildR",
+		"   ├─┬ ChildRL",
+		"   │ ├──",
+		"   │ └── ChildRLR",
+		"   └─┬ ChildRR",
+		"     ├── ChildRRL",
+		"     └──",
 	}
 	expectedBalanced := []string{
-		"        ┌─ ChildLLL",
-		"     ┌─ ChildLL",
-		"     │  └─ ",
-		"  ┌─ ChildL",
-		"  │  │  ┌─ ",
-		"  │  └─ ┤",
-		"  │     └─ ChildLRR",
-		"─ ┤",
-		"  │     ┌─ ",
-		"  │  ┌─ ChildRL",
-		"  │  │  └─ ChildRLR",
-		"  └─ ChildR",
-		"     │  ┌─ ChildRRL",
-		"     └─ ChildRR",
-		"        └─ ",
+		"     ┌── ChildLLL",
+		"   ┌─┼ ChildLL",
+		"   │ └──",
+		" ┌─┼ ChildL",
+		" │ │ ┌──",
+		" │ └─┤",
+		" │   └── ChildLRR",
+		"─┤",
+		" │   ┌──",
+		" │ ┌─┼ ChildRL",
+		" │ │ └── ChildRLR",
+		" └─┼ ChildR",
+		"   │ ┌── ChildRRL",
+		"   └─┼ ChildRR",
+		"     └──",
 	}
 	expectedBottomUp := []string{
-		"        ┌─ ChildLLL",
-		"        ├─ ",
-		"     ┌─ ChildLL",
-		"     │  ┌─ ",
-		"     │  ├─ ChildLRR",
-		"     ├─ ┘",
-		"  ┌─ ChildL",
-		"  │     ┌─ ",
-		"  │     ├─ ChildRLR",
-		"  │  ┌─ ChildRL",
-		"  │  │  ┌─ ChildRRL",
-		"  │  │  ├─ ",
-		"  │  ├─ ChildRR",
-		"  ├─ ChildR",
-		"─ ┘",
+		"     ┌── ChildLLL",
+		"     ├──",
+		"   ┌─┴ ChildLL",
+		"   │ ┌──",
+		"   │ ├── ChildLRR",
+		"   ├─┘",
+		" ┌─┴ ChildL",
+		" │   ┌──",
+		" │   ├── ChildRLR",
+		" │ ┌─┴ ChildRL",
+		" │ │ ┌── ChildRRL",
+		" │ │ ├──",
+		" │ ├─┴ ChildRR",
+		" ├─┴ ChildR",
+		"─┘",
 	}
 	testDisplayTypesBinary(t, root, expectedTopDown, expectedBalanced, expectedBottomUp)
 }
@@ -266,31 +266,31 @@ func TestDisplayBinaryEmptyNodesAllEmpty(t *testing.T) {
 	childR := createEmptyBinaryNode(childRL, childRR)
 	root := createEmptyBinaryNode(childL, childR)
 	expectedTopDown := []string{
-		"─ ┐",
-		"  ├─ ┐",
-		"  │  ├─ ChildLL",
-		"  │  └─ ChildLR",
-		"  └─ ┐",
-		"     ├─ ChildRL",
-		"     └─ ChildRR",
+		"─┐",
+		" ├─┐",
+		" │ ├── ChildLL",
+		" │ └── ChildLR",
+		" └─┐",
+		"   ├── ChildRL",
+		"   └── ChildRR",
 	}
 	expectedBalanced := []string{
-		"     ┌─ ChildLL",
-		"  ┌─ ┤",
-		"  │  └─ ChildLR",
-		"─ ┤",
-		"  │  ┌─ ChildRL",
-		"  └─ ┤",
-		"     └─ ChildRR",
+		"   ┌── ChildLL",
+		" ┌─┤",
+		" │ └── ChildLR",
+		"─┤",
+		" │ ┌── ChildRL",
+		" └─┤",
+		"   └── ChildRR",
 	}
 	expectedBottomUp := []string{
-		"     ┌─ ChildLL",
-		"     ├─ ChildLR",
-		"  ┌─ ┘",
-		"  │  ┌─ ChildRL",
-		"  │  ├─ ChildRR",
-		"  ├─ ┘",
-		"─ ┘",
+		"   ┌── ChildLL",
+		"   ├── ChildLR",
+		" ┌─┘",
+		" │ ┌── ChildRL",
+		" │ ├── ChildRR",
+		" ├─┘",
+		"─┘",
 	}
 	testDisplayTypesBinary(t, root, expectedTopDown, expectedBalanced, expectedBottomUp)
 }

@@ -15,7 +15,7 @@ type testConfig struct {
 	displayFunc   displayFuncDef
 	displayConfig tree.DisplayTreeConfig
 }
-func NewTestConfig() testConfig {
+func newTestConfig() testConfig {
 	return testConfig{nil, tree.NewDisplayConfig()}
 }
 func (orig testConfig) ForStandardTree(root tree.Node) testConfig {
@@ -37,12 +37,12 @@ func (orig testConfig) WithDisplayCharacterType(value tree.CharacterType) testCo
 }
 
 func testDisplayTypes(t *testing.T, root tree.Node, expectedTopDown []string, expectedBalanced []string, expectedBalancedFavourTop []string, expectedBottomUp []string) {
-	testConfig := NewTestConfig().ForStandardTree(root)
+	testConfig := newTestConfig().ForStandardTree(root)
 	testDisplayTypesImpl(t, testConfig,  expectedTopDown, expectedBalanced, expectedBalancedFavourTop, expectedBottomUp)
 }
 
 func testDisplayTypesBinary(t *testing.T, root tree.BinaryNode, expectedTopDown []string, expectedBalanced []string, expectedBottomUp []string) {
-	testConfig := NewTestConfig().ForBinaryTree(root)
+	testConfig := newTestConfig().ForBinaryTree(root)
 	// Favour up ignored, treat as balanced
 	testDisplayTypesImpl(t, testConfig,  expectedTopDown, expectedBalanced, expectedBalanced, expectedBottomUp)
 }
@@ -76,55 +76,3 @@ func assertDisplay(t *testing.T, actual []string, expected []string) {
 	}
 }
 
-// -------------------------------------------------------------------------------------------------
-// Tree
-// -------------------------------------------------------------------------------------------------
-
-type testTreeNode struct {
-	value    interface{}
-	children []tree.Node
-}
-
-func (n testTreeNode) NodeValue() interface{} {
-	return n.value
-}
-
-func (n testTreeNode) Children() []tree.Node {
-	return n.children
-}
-
-func createNode(value string, children ...tree.Node) tree.Node {
-	return testTreeNode{value, children}
-}
-
-func createEmptyNode(children ...tree.Node) tree.Node {
-	return testTreeNode{nil, children}
-}
-
-// -------------------------------------------------------------------------------------------------
-// Binary tree
-// -------------------------------------------------------------------------------------------------
-type testBinaryTreeNode struct {
-	value interface{}
-	left  tree.BinaryNode
-	right tree.BinaryNode
-}
-
-func (n testBinaryTreeNode) NodeValue() interface{} {
-	return n.value
-}
-func (n testBinaryTreeNode) Left() tree.BinaryNode {
-	return n.left
-}
-func (n testBinaryTreeNode) Right() tree.BinaryNode {
-	return n.right
-}
-func createBinaryNode(value string, left tree.BinaryNode, right tree.BinaryNode) tree.BinaryNode {
-	return testBinaryTreeNode{value, left, right}
-}
-func createEmptyBinaryNode(left tree.BinaryNode, right tree.BinaryNode) tree.BinaryNode {
-	return testBinaryTreeNode{nil, left, right}
-}
-func createBinaryLeafNode(value string) tree.BinaryNode {
-	return createBinaryNode(value, nil, nil)
-}
