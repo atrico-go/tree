@@ -101,11 +101,10 @@ func formatPrefix(details *nodeDetails, context parentPosition) string {
 				bypass = context == aboveParent
 			}
 			if bypass {
-				highlight := (details.isOnHighlightPath() && (
-					(context == belowParent && details.parentPosition == aboveParent) ||
-					(context == aboveParent && details.parentPosition == belowParent))) ||
+				highlight := (context == belowParent && details.isOnHighlightPath() && details.parentPosition == aboveParent) ||
+					(context == aboveParent && details.isOnHighlightPath() && details.parentPosition == belowParent) ||
 					(context == belowParent && details.hasHighlightSiblingBelow()) ||
-				(context == aboveParent && details.hasHighlightSiblingAbove())
+					(context == aboveParent && details.hasHighlightSiblingAbove())
 				prefix.WriteString(GetBoxCharHeavy(BoxSingle, BoxSingle, BoxNone, BoxNone, highlight)) // |
 			} else {
 				prefix.WriteString(GetBoxChar(BoxNone, BoxNone, BoxNone, BoxNone)) // space
