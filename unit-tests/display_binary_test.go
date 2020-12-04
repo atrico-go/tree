@@ -2,6 +2,8 @@ package unit_tests
 
 import (
 	"testing"
+
+	"github.com/atrico-go/tree"
 )
 
 func TestDisplayBinarySingleNode(t *testing.T) {
@@ -293,4 +295,10 @@ func TestDisplayBinaryEmptyNodesAllEmpty(t *testing.T) {
 		"─┘",
 	}
 	testDisplayTypesBinary(t, root, expectedTopDown, expectedBalanced, expectedBottomUp)
+}
+
+func testDisplayTypesBinary(t *testing.T, root tree.BinaryNode, expectedTopDown []string, expectedBalanced []string, expectedBottomUp []string) {
+	testConfig := newTestConfig().ForBinaryTree(root)
+	// Favour up ignored, treat as balanced
+	testDisplayTypesImpl(t, testConfig,  expectedTopDown, expectedBalanced, expectedBalanced, expectedBottomUp)
 }
