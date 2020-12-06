@@ -1,22 +1,23 @@
-package tree
+package treedisplay
 
 import (
 	"fmt"
+	"github.com/atrico-go/tree"
 	"strings"
 )
 
-func DisplayTree(root Node, config DisplayTreeConfig) []string {
-	highlights := make([]Node, 0)
+func DisplayTree(root tree.Node, config DisplayTreeConfig) []string {
+	highlights := make([]tree.Node, 0)
 	if config.Highlight != nil {
-		if found, foundHl := FindValue(root, config.Highlight); found {
+		if found, foundHl := tree.FindValue(root, config.Highlight); found {
 			highlights = foundHl
 		}
 	}
 	return displayTree(newRootDetails(root, highlights, config), config)
 }
 
-func DisplayBinaryTree(root BinaryNode, config DisplayTreeConfig) []string {
-	return DisplayTree(BinaryNodeTreeWrapper{root}, config)
+func DisplayBinaryTree(root tree.BinaryNode, config DisplayTreeConfig) []string {
+	return DisplayTree(tree.BinaryNodeTreeWrapper{BinaryNode: root}, config)
 }
 
 func displayTree(details nodeDetails, config DisplayTreeConfig) []string {

@@ -1,9 +1,9 @@
-package tree
+package treedisplay
 
 type DisplayTreeConfig struct {
 	Type       DisplayType
 	Characters CharacterType
-	Highlight interface{}
+	Highlight  interface{}
 }
 
 func NewDisplayConfig() DisplayTreeConfig {

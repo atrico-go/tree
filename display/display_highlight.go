@@ -1,4 +1,6 @@
-package tree
+package treedisplay
+
+import "github.com/atrico-go/tree"
 
 type highlightPosition string
 
@@ -15,14 +17,14 @@ func (hl highlightPosition) String() string {
 	return string(hl)
 }
 
-func processHighlightRoot(node Node, highlights []Node, config DisplayTreeConfig) (highlightPosition highlightPosition, highlightChildIdx int, highlightsTail []Node) {
+func processHighlightRoot(node tree.Node, highlights []tree.Node, config DisplayTreeConfig) (highlightPosition highlightPosition, highlightChildIdx int, highlightsTail []tree.Node) {
 	if len(highlights) > 0 && node.Equals(highlights[0]) {
 		highlightsTail = highlights[1:]
 		if len(highlightsTail) == 0 {
 			highlightPosition = iAmHighlight
 		} else {
 			next := highlightsTail[0]
-			_, highlightChildIdx = Contains(node.Children(), next)
+			_, highlightChildIdx = tree.Contains(node.Children(), next)
 			childrenAbove := numberOfChildren(node, config).above
 			if highlightChildIdx < childrenAbove {
 				highlightPosition = childHighlightAbove
@@ -32,12 +34,12 @@ func processHighlightRoot(node Node, highlights []Node, config DisplayTreeConfig
 		}
 	} else {
 		highlightPosition = noHighlight
-		highlightsTail = make([]Node, 0)
+		highlightsTail = make([]tree.Node, 0)
 	}
 	return highlightPosition, highlightChildIdx, highlightsTail
 }
 
-func processHighlightNode(node Node, parent nodeDetails, idx int, config DisplayTreeConfig) (highlightPosition highlightPosition, highlightChildIdx int, highlightsTail []Node) {
+func processHighlightNode(node tree.Node, parent nodeDetails, idx int, config DisplayTreeConfig) (highlightPosition highlightPosition, highlightChildIdx int, highlightsTail []tree.Node) {
 	highlightPosition, highlightChildIdx, highlightsTail = processHighlightRoot(node, parent.remainingHighlights, config)
 	if highlightPosition == noHighlight {
 		if parent.hasHighlightChild() {
