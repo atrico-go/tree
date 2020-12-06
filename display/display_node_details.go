@@ -1,4 +1,6 @@
-package tree
+package treedisplay
+
+import "github.com/atrico-go/tree"
 
 type parentPosition string
 type siblingLocation string
@@ -27,16 +29,16 @@ type numberSplit struct {
 
 type nodeDetails struct {
 	parent              *nodeDetails
-	node                Node
+	node                tree.Node
 	parentPosition      parentPosition
 	siblingLocation     siblingLocation
 	children            numberSplit
 	highlightPosition   highlightPosition
 	highlightChildIdx   int
-	remainingHighlights []Node
+	remainingHighlights []tree.Node
 }
 
-func newRootDetails(node Node, highlights []Node, config DisplayTreeConfig) nodeDetails {
+func newRootDetails(node tree.Node, highlights []tree.Node, config DisplayTreeConfig) nodeDetails {
 	highlightPosition, highlightChildIdx, highlightsTail := processHighlightRoot(node, highlights, config)
 	return nodeDetails{nil, node, noParent, midSibling, numberOfChildren(node, config), highlightPosition, highlightChildIdx, highlightsTail}
 }
@@ -92,7 +94,7 @@ func (d nodeDetails) hasHighlightSiblingBelow() bool {
 // ---------------------------------------------------------------
 // Internal functions
 // ---------------------------------------------------------------
-func numberOfChildren(node Node, config DisplayTreeConfig) numberSplit {
+func numberOfChildren(node tree.Node, config DisplayTreeConfig) numberSplit {
 	total := len(node.Children())
 	var above int
 	switch config.Type {
