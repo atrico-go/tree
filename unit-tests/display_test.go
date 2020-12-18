@@ -2,17 +2,19 @@ package unit_tests
 
 import (
 	"testing"
+
+	"github.com/atrico-go/tree"
 )
 
-func TestDisplaySingleNode(t *testing.T) {
+func TestDisplayStandardSingleNode(t *testing.T) {
 	root := createNode("Root")
 	expected := []string{
 		"── Root",
 	}
-	testDisplayTypes(t, root, expected, expected, expected, expected)
+	testDisplayStandardTypes(t, root, expected, expected, expected, expected)
 }
 
-func TestDisplaySingleChild(t *testing.T) {
+func TestDisplayStandardSingleChild(t *testing.T) {
 	child1 := createNode("Child1")
 	root := createNode("Root", child1)
 	expectedTopDown := []string{
@@ -25,10 +27,10 @@ func TestDisplaySingleChild(t *testing.T) {
 		"─┴ Root",
 	}
 	expectedBottomUp := expectedBalancedFavourTop
-	testDisplayTypes(t, root, expectedTopDown, expectedBalanced, expectedBalancedFavourTop, expectedBottomUp)
+	testDisplayStandardTypes(t, root, expectedTopDown, expectedBalanced, expectedBalancedFavourTop, expectedBottomUp)
 }
 
-func TestDisplaySingleLevelChildrenEven(t *testing.T) {
+func TestDisplayStandardSingleLevelChildrenEven(t *testing.T) {
 	child1 := createNode("Child1")
 	child2 := createNode("Child2")
 	root := createNode("Root", child1, child2)
@@ -48,10 +50,10 @@ func TestDisplaySingleLevelChildrenEven(t *testing.T) {
 		" ├── Child2",
 		"─┴ Root",
 	}
-	testDisplayTypes(t, root, expectedTopDown, expectedBalanced, expectedBalancedFavourTop, expectedBottomUp)
+	testDisplayStandardTypes(t, root, expectedTopDown, expectedBalanced, expectedBalancedFavourTop, expectedBottomUp)
 }
 
-func TestDisplaySingleLevelChildrenOdd(t *testing.T) {
+func TestDisplayStandardSingleLevelChildrenOdd(t *testing.T) {
 	child1 := createNode("Child1")
 	child2 := createNode("Child2")
 	child3 := createNode("Child3")
@@ -80,10 +82,10 @@ func TestDisplaySingleLevelChildrenOdd(t *testing.T) {
 		" ├── Child3",
 		"─┴ Root",
 	}
-	testDisplayTypes(t, root, expectedTopDown, expectedBalanced, expectedBalancedFavourTop, expectedBottomUp)
+	testDisplayStandardTypes(t, root, expectedTopDown, expectedBalanced, expectedBalancedFavourTop, expectedBottomUp)
 }
 
-func TestDisplayMultipleLevelChildren(t *testing.T) {
+func TestDisplayStandardMultipleLevelChildren(t *testing.T) {
 	// Arrange
 	child11 := createNode("Child11")
 	child12 := createNode("Child12")
@@ -120,10 +122,10 @@ func TestDisplayMultipleLevelChildren(t *testing.T) {
 		" ├─┴ Child2",
 		"─┴ Root",
 	}
-	testDisplayTypes(t, root, expectedTopDown, expectedBalanced, expectedBalancedFavourTop, expectedBottomUp)
+	testDisplayStandardTypes(t, root, expectedTopDown, expectedBalanced, expectedBalancedFavourTop, expectedBottomUp)
 }
 
-func TestDisplayManyLevelChildren(t *testing.T) {
+func TestDisplayStandardManyLevelChildren(t *testing.T) {
 	// Arrange
 	child111 := createNode("Child111")
 	child11 := createNode("Child11", child111)
@@ -188,18 +190,18 @@ func TestDisplayManyLevelChildren(t *testing.T) {
 		" ├─┴ Child2",
 		"─┴ Root",
 	}
-	testDisplayTypes(t, root, expectedTopDown, expectedBalanced, expectedBalancedFavourTop, expectedBottomUp)
+	testDisplayStandardTypes(t, root, expectedTopDown, expectedBalanced, expectedBalancedFavourTop, expectedBottomUp)
 }
 
-func TestDisplayEmptyNodesSingleNode(t *testing.T) {
+func TestDisplayStandardEmptyNodesSingleNode(t *testing.T) {
 	root := createEmptyNode()
 	expected := []string{
 		"──",
 	}
-	testDisplayTypes(t, root, expected, expected, expected, expected)
+	testDisplayStandardTypes(t, root, expected, expected, expected, expected)
 }
 
-func TestDisplayEmptyNodesManyLevelChildren(t *testing.T) {
+func TestDisplayStandardEmptyNodesManyLevelChildren(t *testing.T) {
 	// Arrange
 	child111 := createNode("Child111")
 	child11 := createNode("Child11", child111)
@@ -264,10 +266,10 @@ func TestDisplayEmptyNodesManyLevelChildren(t *testing.T) {
 		" ├─┴ Child2",
 		"─┘",
 	}
-	testDisplayTypes(t, root, expectedTopDown, expectedBalanced, expectedBalancedFavourTop, expectedBottomUp)
+	testDisplayStandardTypes(t, root, expectedTopDown, expectedBalanced, expectedBalancedFavourTop, expectedBottomUp)
 }
 
-func TestDisplayEmptyNodesAllEmpty(t *testing.T) {
+func TestDisplayStandardEmptyNodesAllEmpty(t *testing.T) {
 	// Arrange
 	child11 := createNode("Child11")
 	child12 := createNode("Child12")
@@ -304,5 +306,10 @@ func TestDisplayEmptyNodesAllEmpty(t *testing.T) {
 		" ├─┘",
 		"─┘",
 	}
-	testDisplayTypes(t, root, expectedTopDown, expectedBalanced, expectedBalancedFavourTop, expectedBottomUp)
+	testDisplayStandardTypes(t, root, expectedTopDown, expectedBalanced, expectedBalancedFavourTop, expectedBottomUp)
+}
+
+func testDisplayStandardTypes(t *testing.T, root tree.Node, expectedTopDown []string, expectedBalanced []string, expectedBalancedFavourTop []string, expectedBottomUp []string) {
+	testConfig := newTestConfig().ForStandardTree(root)
+	testDisplayTypesImpl(t, testConfig,  expectedTopDown, expectedBalanced, expectedBalancedFavourTop, expectedBottomUp)
 }

@@ -36,15 +36,8 @@ func (orig testConfig) WithDisplayCharacterType(value tree.CharacterType) testCo
 	return testConfig{displayFunc: orig.displayFunc, displayConfig: orig.displayConfig.WithCharacterType(value)}
 }
 
-func testDisplayTypes(t *testing.T, root tree.Node, expectedTopDown []string, expectedBalanced []string, expectedBalancedFavourTop []string, expectedBottomUp []string) {
-	testConfig := newTestConfig().ForStandardTree(root)
-	testDisplayTypesImpl(t, testConfig,  expectedTopDown, expectedBalanced, expectedBalancedFavourTop, expectedBottomUp)
-}
-
-func testDisplayTypesBinary(t *testing.T, root tree.BinaryNode, expectedTopDown []string, expectedBalanced []string, expectedBottomUp []string) {
-	testConfig := newTestConfig().ForBinaryTree(root)
-	// Favour up ignored, treat as balanced
-	testDisplayTypesImpl(t, testConfig,  expectedTopDown, expectedBalanced, expectedBalanced, expectedBottomUp)
+func (orig testConfig) WithHighlight(value interface{}) testConfig {
+	return testConfig{displayFunc: orig.displayFunc, displayConfig: orig.displayConfig.WithHighlight(value)}
 }
 
 func testDisplayTypesImpl(t *testing.T, testConfig testConfig, expectedTopDown []string, expectedBalanced []string, expectedBalancedFavourTop []string, expectedBottomUp []string) {

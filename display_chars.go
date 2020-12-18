@@ -10,6 +10,28 @@ const (
 	BoxHeavy  BoxType = 3
 )
 
+func GetBoxChar(up BoxType, down BoxType, left BoxType, right BoxType) string {
+	return boxParts[createDir(up, down, left, right)]
+}
+
+func GetBoxCharHeavy(up BoxType, down BoxType, left BoxType, right BoxType, makeHeavy bool) string {
+	return GetBoxChar(up.MakeHeavy(makeHeavy), down.MakeHeavy(makeHeavy), left.MakeHeavy(makeHeavy), right.MakeHeavy(makeHeavy))
+}
+func IfThenElseBoxType(c bool, t BoxType, f BoxType) BoxType {
+	if c {
+		return t
+	} else {
+		return f
+	}
+}
+
+func (bt BoxType) MakeHeavy(c bool) BoxType {
+	if c && bt == BoxSingle {
+		return BoxHeavy
+	}
+	return bt
+}
+
 type direction uint32
 
 func (d direction) getUp() BoxType {
@@ -172,8 +194,4 @@ var boxParts = map[direction]string{
 	createDir(BoxHeavy, BoxSingle, BoxHeavy, BoxSingle):   "╃",
 	createDir(BoxSingle, BoxHeavy, BoxHeavy, BoxSingle):   "╅",
 	createDir(BoxHeavy, BoxSingle, BoxSingle, BoxHeavy):   "╄",
-}
-
-func getBoxChar(up BoxType, down BoxType, left BoxType, right BoxType) string {
-	return boxParts[createDir(up, down, left, right)]
 }
