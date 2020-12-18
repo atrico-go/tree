@@ -6,4 +6,6 @@ type Node interface {
 	NodeValue() interface{}
 	// This node's children
 	Children() []Node
+	// Is this node the same node (or copy of)
+	Equals(rhs Node) bool
 }

@@ -1,6 +1,5 @@
 package tree
 
-
 // Binary tree node
 type BinaryNode interface {
 	// The value associated with this node
@@ -8,6 +7,8 @@ type BinaryNode interface {
 	// This node's children
 	Left() BinaryNode
 	Right() BinaryNode
+	// Is this node the same node (or copy of)
+	Equals(rhs BinaryNode) bool
 }
 
 // ---------------------------------------------------------------------
@@ -29,4 +30,14 @@ func (n BinaryNodeTreeWrapper) Children() []Node {
 		return []Node{BinaryNodeTreeWrapper{n.BinaryNode.Left()}, BinaryNodeTreeWrapper{n.BinaryNode.Right()}}
 	}
 	return make([]Node, 0)
+}
+
+func (n BinaryNodeTreeWrapper) Equals(rhs Node) bool {
+	switch nt := rhs.(type) {
+	case BinaryNodeTreeWrapper:
+		if n.BinaryNode != nil {
+			return n.BinaryNode.Equals(nt.BinaryNode)
+		}
+	}
+	return false
 }
