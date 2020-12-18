@@ -2,6 +2,7 @@ package treedisplay
 
 import (
 	"fmt"
+	"github.com/atrico-go/console"
 	"github.com/atrico-go/tree"
 	"strings"
 )
@@ -39,42 +40,42 @@ func formatNode(details nodeDetails) string {
 	// Attachment to tree structure
 	if !details.isRoot() {
 		if details.parentPosition == aboveParent && details.siblingLocation == firstSibling {
-			text.WriteString(GetBoxCharHeavy(BoxNone, BoxSingle, BoxNone, BoxSingle, details.isOnHighlightPath())) // ┌
+			text.WriteString(console.MustGetBoxChar(false, true, false, true, console.BoxSingle.HeavyIf(details.isOnHighlightPath()))) // ┌
 		} else if details.parentPosition == belowParent && details.siblingLocation == lastSibling {
-			text.WriteString(GetBoxCharHeavy(BoxSingle, BoxNone, BoxNone, BoxSingle, details.isOnHighlightPath())) // └
+			text.WriteString(console.MustGetBoxChar(true, false, false, true, console.BoxSingle.HeavyIf(details.isOnHighlightPath()))) // └
 		} else if details.isHighlighted() {
-			text.WriteString(GetBoxChar(
-				BoxSingle.MakeHeavy(details.parentPosition == belowParent),
-				BoxSingle.MakeHeavy(details.parentPosition == aboveParent),
-				BoxNone,
-				BoxHeavy)) // ├
+			text.WriteString(console.MustGetBoxCharMixed(
+				console.BoxSingle.HeavyIf(details.parentPosition == belowParent),
+				console.BoxSingle.HeavyIf(details.parentPosition == aboveParent),
+				console.BoxNone,
+				console.BoxHeavy)) // ├
 		} else if details.isOnHighlightPath() {
-			text.WriteString(GetBoxChar(
-				BoxSingle.MakeHeavy(details.parentPosition == belowParent),
-				BoxSingle.MakeHeavy(details.parentPosition == aboveParent),
-				BoxNone,
-				BoxHeavy)) // ├
+			text.WriteString(console.MustGetBoxCharMixed(
+				console.BoxSingle.HeavyIf(details.parentPosition == belowParent),
+				console.BoxSingle.HeavyIf(details.parentPosition == aboveParent),
+				console.BoxNone,
+				console.BoxHeavy)) // ├
 		} else {
 			passThrough := (details.highlightPosition == siblingHighlightAbove && details.parentPosition == aboveParent) ||
 				(details.highlightPosition == siblingHighlightBelow && details.parentPosition == belowParent)
-			text.WriteString(GetBoxChar(
-				BoxSingle.MakeHeavy(passThrough),
-				BoxSingle.MakeHeavy(passThrough),
-				BoxNone,
-				BoxSingle)) // ├
+			text.WriteString(console.MustGetBoxCharMixed(
+				console.BoxSingle.HeavyIf(passThrough),
+				console.BoxSingle.HeavyIf(passThrough),
+				console.BoxNone,
+				console.BoxSingle)) // ├
 		}
 	}
 	// Dash
-	text.WriteString(GetBoxCharHeavy(BoxNone, BoxNone, BoxSingle, BoxSingle, details.isOnHighlightPath())) // -
+	text.WriteString(console.MustGetBoxChar(false, false, true, true, console.BoxSingle.HeavyIf(details.isOnHighlightPath()))) // -
 	// Name of node (and branch chars)
-	up := IfThenElseBoxType(details.children.above > 0, BoxSingle.MakeHeavy(details.hasHighlightChildAbove()), BoxNone)
-	down := IfThenElseBoxType(details.children.below > 0, BoxSingle.MakeHeavy(details.hasHighlightChildBelow()), BoxNone)
-	left := IfThenElseBoxType(details.isOnHighlightPath(), BoxHeavy, BoxSingle)
+	up := console.ConditionalBoxType(details.children.above > 0, console.BoxSingle.HeavyIf(details.hasHighlightChildAbove()), console.BoxNone)
+	down := console.ConditionalBoxType(details.children.below > 0, console.BoxSingle.HeavyIf(details.hasHighlightChildBelow()), console.BoxNone)
+	left := console.BoxSingle.HeavyIf(details.isOnHighlightPath())
 	value := details.node.NodeValue()
-	right := IfThenElseBoxType(value != nil || len(details.node.Children()) == 0, BoxSingle.MakeHeavy(details.isHighlighted()), BoxNone)
-	text.WriteString(GetBoxChar(up, down, left, right))
+	right := console.ConditionalBoxType(value != nil || len(details.node.Children()) == 0, console.BoxSingle.HeavyIf(details.isHighlighted()), console.BoxNone)
+	text.WriteString(console.MustGetBoxCharMixed(up, down, left, right))
 	if value != nil {
-		text.WriteString(fmt.Sprintf("%s%v", GetBoxChar(BoxNone, BoxNone, BoxNone, BoxNone), value))
+		text.WriteString(fmt.Sprintf("%s%v", console.MustGetBoxChar(false,false,false,false, console.BoxNone), value))
 	}
 	// TODO - Start
 	// text.WriteString(fmt.Sprintf(":par=%v,sib=%v,hl=%v,hlIx=%v", details.parentPosition, details.siblingLocation, details.highlightPosition, details.highlightChildIdx))
@@ -106,12 +107,12 @@ func formatPrefix(details *nodeDetails, context parentPosition) string {
 					(context == aboveParent && details.isOnHighlightPath() && details.parentPosition == belowParent) ||
 					(context == belowParent && details.hasHighlightSiblingBelow()) ||
 					(context == aboveParent && details.hasHighlightSiblingAbove())
-				prefix.WriteString(GetBoxCharHeavy(BoxSingle, BoxSingle, BoxNone, BoxNone, highlight)) // |
+				prefix.WriteString(console.MustGetBoxChar(true, true, false, false, console.BoxSingle.HeavyIf(highlight))) // |
 			} else {
-				prefix.WriteString(GetBoxChar(BoxNone, BoxNone, BoxNone, BoxNone)) // space
+				prefix.WriteString(console.MustGetBoxChar(false,false,false,false, console.BoxNone)) // space
 			}
 		}
-		prefix.WriteString(GetBoxChar(BoxNone, BoxNone, BoxNone, BoxNone)) // space
+		prefix.WriteString(console.MustGetBoxChar(false,false,false,false, console.BoxNone)) // space
 	}
 	return prefix.String()
 }
